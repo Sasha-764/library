@@ -1,5 +1,6 @@
 package com.library.library.exception;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -36,7 +37,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorResponse> handleBadBody(HttpMessageNotReadableException e) {
-        return build(HttpStatus.BAD_REQUEST, "Неверный формат запроса");
+        return build(HttpStatus.BAD_REQUEST, "Некорректные данные: проверьте формат и размер чисел");
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponse> handleDb(DataIntegrityViolationException e) {
+        return build(HttpStatus.BAD_REQUEST, "Некорректные данные: значение слишком большое или поле пустое");
     }
 
     private ResponseEntity<ErrorResponse> build(HttpStatus status, String message) {

@@ -1,5 +1,6 @@
 package com.library.library.service;
-
+import com.library.library.repository.LoanRepository;
+import   com.library.library.exception.ConflictException;
 import com.library.library.entity.Book;
 import com.library.library.exception.NotFoundException;
 import com.library.library.repository.BookRepository;
@@ -11,8 +12,9 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class BookService {
-
     private final BookRepository bookRepository;
+    private final LoanRepository loanRepository;
+
 
     public List<Book> getAll() {
         return bookRepository.findAll();
@@ -41,6 +43,9 @@ public class BookService {
 
     public void delete(Long id) {
         Book book = getById(id);
+        if (loanRepository.existsByBook(book)) {
+            throw new ConflictException("Нельзя удалить книгу, у которой есть выдачи");
+        }
         bookRepository.delete(book);
     }
 }

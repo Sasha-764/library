@@ -17,13 +17,14 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        if (!userRepository.existsByEmail("admin@library.com")) {
-            User admin = new User();
-            admin.setEmail("admin@library.com");
-            admin.setPassword(passwordEncoder.encode("admin123"));
-            admin.setFullName("Администратор");
-            admin.setRole(Role.ADMIN);
-            userRepository.save(admin);
-        }
+        User admin = userRepository.findByEmail("admin@library.com").orElseGet(() -> {
+            User u = new User();
+            u.setEmail("admin@library.com");
+            u.setPassword(passwordEncoder.encode("admin123"));
+            u.setFullName("Администратор");
+            return u;
+        });
+        admin.setRole(Role.ADMIN);
+        userRepository.save(admin);
     }
 }
