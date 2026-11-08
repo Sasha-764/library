@@ -3,30 +3,32 @@
 Учебный backend-проект: каталог книг, бронирование, выдача и возврат, роли пользователей.
 
 ## Запуск
+1. Установить JDK 17.
+2. Клонировать репозиторий:
+   ```
+   git clone https://github.com/Sasha-764/library.git
+   cd library
+   ```
+3. Запустить:
+   ```
+   ./mvnw spring-boot:run      (Windows: mvnw.cmd spring-boot:run)
+   ```
+4. Сервер доступен на `http://localhost:8080`.
 
-### Требования
-- JDK 17 или новее (проверка: `java -version`)
-- Git (для клонирования)
-- Maven ставить не нужно, в проекте есть `mvnw`
+## База данных
+Используется H2 в файле `./data/librarydb`. Настройка не нужна: файл и таблицы создаются автоматически при первом запуске (`spring.jpa.hibernate.ddl-auto=update`). Таблицы: `users`, `books`, `loans`.
 
-### Вариант 1: командная строка
-```
-git clone https://github.com/Sasha-764/library.git
-cd library
-mvnw.cmd spring-boot:run
-```
-На Linux / macOS: `./mvnw spring-boot:run`
-
-### Вариант 2: IntelliJ IDEA
-1. File → Open → выбрать папку проекта, дождаться загрузки Maven.
-2. Открыть `LibraryApplication.java` и нажать зелёный треугольник Run.
-
-### Первый вход
-Сервер работает на `http://localhost:8080`. При первом запуске создаётся файл БД `data/librarydb` и администратор:
+При первом запуске создаётся администратор:
 - почта: `admin@library.com`
 - пароль: `admin123`
 
 ## Роли
-- **READER**: 
-- **LIBRARIAN**: 
-- **ADMIN**: 
+- **READER** — смотрит каталог, бронирует книги, видит свои выдачи.
+- **LIBRARIAN** — выдаёт и принимает книги, видит все выдачи.
+- **ADMIN** — всё то же, плюс управление книгами и пользователями.
+
+## Авторизация
+`POST /api/auth/login` возвращает `accessToken` (JWT, действует 24 часа). Дальше его передают в заголовке:
+```
+Authorization: Bearer <accessToken>
+```
